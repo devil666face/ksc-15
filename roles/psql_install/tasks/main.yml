@@ -2,6 +2,7 @@
 - name: Install postgresql-14
   apt:
     name:
+      - acl
       - postgresql-14
       - python3-psycopg2
     state: present
