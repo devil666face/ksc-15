@@ -1,0 +1,15 @@
+[Unit]
+Description=Kaspersky Security Center Web Console Message Queue
+
+[Service]
+Type=simple
+WorkingDirectory=/var/opt/kaspersky/ksc-web-console/vendor
+User=user_message_queue_5v-v9713cc
+CapabilitiesParsec=PARSEC_CAP_PRIV_SOCK
+ExecStart=/usr/bin/env /var/opt/kaspersky/ksc-web-console/vendor/nsqd -tls-cert=../nsq-server.crt -tls-key=../nsq-server.key -tls-required=1 -tls-min-version=tls1.2 -tls-root-ca-file=../KLRootCA.crt -max-msg-size=10485760 -mem-queue-size=100 -sync-every=0 -sync-timeout=24h -http-address=127.0.0.1:4151 -https-address=127.0.0.1:4152 -tcp-address=127.0.0.1:4150 -tls-client-auth-policy=require-verify
+TimeoutSec=1
+Restart=always
+RestartSec=1
+
+[Install]
+WantedBy=multi-user.target

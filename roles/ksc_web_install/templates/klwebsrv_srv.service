@@ -1,0 +1,17 @@
+[Unit]
+Description=Kaspersky Web Server..
+
+
+[Service]
+Environment="PATH=/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin"
+Type=simple
+Restart=on-failure
+TimeoutStopSec=30
+User=root
+ExecStart=/opt/kaspersky/ksc64/sbin/klcsweb -d -from_wd
+CapabilitiesParsec=PARSEC_CAP_PRIV_SOCK
+AmbientCapabilities=CAP_NET_ADMIN CAP_NET_RAW CAP_IPC_LOCK
+
+
+[Install]
+WantedBy=multi-user.target

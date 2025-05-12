@@ -1,0 +1,5 @@
+[node]
+ksc		ansible_ssh_host=%KSC_IP%	ansible_password=%KSC_SUDO_PASSWORD%	ansible_sudo_pass=%KSC_SUDO_PASSWORD%	ansible_user=%KSC_USER%
+mdb		ansible_ssh_host=%KSC_IP%	ansible_password=%KSC_SUDO_PASSWORD%	ansible_sudo_pass=%KSC_SUDO_PASSWORD%	ansible_user=%KSC_USER%
+web		ansible_ssh_host=%KSC_IP%	ansible_password=%KSC_SUDO_PASSWORD%	ansible_sudo_pass=%KSC_SUDO_PASSWORD%	ansible_user=%KSC_USER%
+psql	ansible_ssh_host=%KSC_IP%	ansible_password=%KSC_SUDO_PASSWORD%	ansible_sudo_pass=%KSC_SUDO_PASSWORD%	ansible_user=%KSC_USER%

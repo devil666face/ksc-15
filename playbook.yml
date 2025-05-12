@@ -1,0 +1,62 @@
+---
+- name: Generate permanent passwords for multiple services
+  hosts: localhost
+  gather_facts: false
+  tags:
+    - password
+  roles:
+    - role: gen_passwords
+
+- name: Copy and set repos
+  gather_facts: false
+  become: true
+  tags:
+    - apt
+  hosts:
+    - node
+  serial: 1
+  roles:
+    - role: apt_add_repository
+
+- name: Configure postgresql server
+  tags:
+    - psql
+  hosts:
+    - psql
+  become: true
+  gather_facts: true
+  roles:
+    - role: psql_install
+    - role: psql_set_priveleges
+
+- name: Configure mariadb server
+  become: true
+  gather_facts: false
+  tags:
+    - mdb
+  hosts:
+    - mdb
+  roles:
+    - role: mariadb_install
+    - role: mariadb_set_priveleges
+
+- name: Configure ksc server
+  tags:
+    - ksc
+  hosts:
+    - ksc
+  become: true
+  gather_facts: true
+  roles:
+    - role: ksc_install
+
+- name: Configure ksc web
+  tags:
+    - web
+  hosts:
+    - web
+  become: true
+  gather_facts: true
+  roles:
+    - role: ksc_web_install
+    - role: socat_redirect

@@ -1,0 +1,6 @@
+repo: "deb [trusted=yes] file:/tmp/archives 1.7_x86-64 main"
+mdb_base_size: "10G"
+ksc_file_name: "ksc64_15.1.0-12199_amd64.deb"
+ksc_web_file_name: "ksc-web-console-15.1.523.x86_64.deb"
+db_type: "mysql"
+web_server_name: "Ksc 15 server"

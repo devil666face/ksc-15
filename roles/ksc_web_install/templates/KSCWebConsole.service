@@ -1,0 +1,15 @@
+[Unit]
+Description=Kaspersky Security Center Web Console
+
+[Service]
+Type=simple
+WorkingDirectory=/var/opt/kaspersky/ksc-web-console
+User=user_nodejs_qp6_w8jyoj
+CapabilitiesParsec=PARSEC_CAP_PRIV_SOCK
+ExecStart=/usr/bin/env /var/opt/kaspersky/ksc-web-console/node /var/opt/kaspersky/ksc-web-console/pm.js
+TimeoutSec=1
+Restart=always
+RestartSec=1
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,11 @@
+- name: restart ksc_services
+  systemd:
+    name: "{{ item }}"
+    state: restarted
+    daemon_reload: yes
+  with_items:
+    - KSCSvcWebConsole.service
+    - KSCWebConsoleManagement.service
+    - KSCWebConsoleMessageQueue.service
+    - KSCWebConsolePlugin.service
+    - KSCWebConsole.service

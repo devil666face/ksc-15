@@ -1,0 +1,34 @@
+---
+- name: Load local facts
+  set_fact:
+    db_passwords: "{{ lookup('file', facts_dir + '/db_passwords.fact') | from_json }}"
+
+- name: Create ksc user
+  community.mysql.mysql_user:
+    login_user: root
+    login_password: "{{ db_passwords.db_root_password }}"
+    name: ksc
+    password: "{{ db_passwords.ksc_db_password }}"
+    host: "{{ '127.0.0.1' if ksc_ip==mdb_ip else ksc_ip }}"
+
+- name: Set priveleges for ksc user
+  community.mysql.mysql_query:
+    login_user: root
+    login_password: "{{ db_passwords.db_root_password }}"
+    query:
+      - GRANT USAGE ON *.* TO {{ user }}
+      - GRANT ALL ON KAV.* TO {{ user }}
+      - GRANT SELECT, SHOW VIEW ON mysql.* TO {{ user }}
+      - GRANT SELECT, SHOW VIEW ON sys.* TO {{ user }}
+      - GRANT PROCESS ON *.* TO {{ user }}
+      - GRANT SUPER ON *.* TO {{ user }}
+      # - GRANT EXECUTE ON PROCEDURE sys.table_exists TO {{user}}
+  vars:
+    user: "'ksc'@'{{ '127.0.0.1' if ksc_ip==mdb_ip else ksc_ip }}'"
+
+- name: Create KAV database
+  community.mysql.mysql_db:
+    login_user: root
+    login_password: "{{ db_passwords.db_root_password }}"
+    name:
+      - KAV

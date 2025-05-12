@@ -1,0 +1,30 @@
+---
+- name: Load local facts
+  set_fact:
+    db_passwords: "{{ lookup('file', facts_dir + '/db_passwords.fact') | from_json }}"
+
+- name: Create ksc user in psql
+  become: true
+  become_user: postgres
+  postgresql_user:
+    name: ksc
+    password: "{{ db_passwords.ksc_db_password }}"
+
+- name: Create database kav in psql
+  become: true
+  become_user: postgres
+  postgresql_db:
+    name: KAV
+    state: present
+    encoding: UTF8
+    template: template0
+
+- name: Grant all privileges to base kav
+  become: true
+  become_user: postgres
+  postgresql_privs:
+    db: KAV
+    privs: ALL
+    type: database
+    objs: ""
+    role: ksc

@@ -1,0 +1,48 @@
+- name: Install requirements
+  apt:
+    name:
+      - xz-utils
+    state: present
+
+- name: Copy klserver.cer
+  copy:
+    src: "/tmp/ksc/var/opt/kaspersky/klnagent_srv/1093/cert/klserver.cer"
+    dest: /etc/
+
+- name: Create ksc-web-console-setup.json file
+  template:
+    src: ./ksc-web-console-setup.json
+    dest: /etc/ksc-web-console-setup.json
+
+- name: Copy web console deb file
+  copy:
+    src: "./{{ ksc_web_file_name }}"
+    dest: /tmp/
+
+- name: Install web console deb file
+  apt:
+    deb: "/tmp/{{ ksc_web_file_name }}"
+
+- name: Add AmbientCapabilities=CAP_NET_ADMIN CAP_NET_RAW CAP_IPC_LOCK in KSC* services
+  lineinfile:
+    path: "/etc/systemd/system/{{ item }}"
+    insertafter: '^[^\[]*\[Service\]'
+    line: "AmbientCapabilities=CAP_NET_ADMIN CAP_NET_RAW CAP_IPC_LOCK"
+  with_items:
+    - KSCSvcWebConsole.service
+    - KSCWebConsoleManagement.service
+    - KSCWebConsoleMessageQueue.service
+    - KSCWebConsolePlugin.service
+    - KSCWebConsole.service
+  notify: restart ksc_services
+
+- name: Format klwebsrv_srv.service unit for astra compatibility
+  template:
+    src: ./klwebsrv_srv.service
+    dest: /lib/systemd/system/klwebsrv_srv.service
+
+- name: Restart kladminserver_srv
+  systemd:
+    name: klwebsrv_srv
+    state: restarted
+    daemon_reload: yes

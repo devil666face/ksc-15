@@ -1,0 +1,41 @@
+---
+- name: Install postgresql-14
+  apt:
+    name:
+      - postgresql-14
+      - python3-psycopg2
+    state: present
+
+- name: Get max stack depth
+  shell: |
+    expr $(ulimit -s) - 1024
+  register: max_stack_depth
+
+- name: Get shared buffers
+  shell: |
+    grep 'MemTota' /proc/meminfo | grep -o '[[:digit:]]*'
+  register: shared_buffers
+
+- name: set fact
+  set_fact:
+    max_stack_depth: "{{ max_stack_depth.stdout }}"
+    shared_buffers: "{{ shared_buffers.stdout }}"
+
+- name: Set postgresql.conf
+  template:
+    src: ./postgresql.conf
+    dest: /etc/postgresql/14/main/conf.d/ksc.conf
+  vars:
+    db_ip: "{{ '127.0.0.1' if ksc_ip==psql_ip else psql_ip }}"
+
+- name: Set pg_hba.conf
+  template:
+    src: ./pg_hba.conf
+    dest: /etc/postgresql/14/main
+  vars:
+    client_ip: "{{ '127.0.0.1' if ksc_ip==psql_ip else ksc_ip }}"
+
+- name: Restart postgresql
+  systemd:
+    name: postgresql
+    state: restarted

@@ -1,0 +1,7 @@
+# db_type: "mysql"
+db_type: "postgres"
+web_server_name: "KSC15"
+# ksc_ip: "192.168.122.122"
+# web_ip: "127.0.0.1"
+# mdb_ip: "127.0.0.1"
+# psql_ip: "127.0.0.1"

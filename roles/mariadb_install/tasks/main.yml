@@ -1,0 +1,38 @@
+---
+- name: Load local facts
+  set_fact:
+    db_passwords: "{{ lookup('file', facts_dir + '/db_passwords.fact') | from_json }}"
+
+- name: Install mariadb-server-10.3
+  apt:
+    name:
+      - mariadb-server-10.3
+      - python3-mysqldb
+    state: present
+
+- name: Set config
+  template:
+    src: ./mariadb.cnf
+    dest: /etc/mysql/mariadb.cnf
+  vars:
+    db_ip: "{{ '127.0.0.1' if ksc_ip==mdb_ip else mdb_ip }}"
+
+- name: Set the root password
+  community.mysql.mysql_user: login_user=root login_password="{{ db_passwords.db_root_password }}" user=root password="{{ db_passwords.db_root_password }}"
+
+- name: Secure the root user for 127.0.0.1
+  community.mysql.mysql_user: login_user=root login_password="{{ db_passwords.db_root_password }}" user=root password="{{ db_passwords.db_root_password }}" host="127.0.0.1"
+
+- name: Secure the root user for localhost
+  community.mysql.mysql_user: login_user=root login_password="{{ db_passwords.db_root_password }}" user=root password="{{ db_passwords.db_root_password }}" host="localhost"
+
+- name: Deletes anonymous server user
+  community.mysql.mysql_user: login_user=root login_password="{{ db_passwords.db_root_password }}" user="" host_all=yes state=absent
+
+- name: Removes the test database
+  community.mysql.mysql_db: login_user=root login_password="{{ db_passwords.db_root_password }}" db=test state=absent
+
+- name: Restart mariadb
+  systemd:
+    name: mariadb
+    state: restarted

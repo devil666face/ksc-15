@@ -1,0 +1,64 @@
+- name: Ensure facts directory exists
+  file:
+    path: "{{ facts_dir }}"
+    state: directory
+    mode: "0700"
+
+- name: Check if db_root_password file exists
+  stat:
+    path: "{{ db_root_password_file }}"
+  register: db_root_password_file_status
+
+- name: Check if ksc_db_password file exists
+  stat:
+    path: "{{ ksc_db_password_file }}"
+  register: ksc_db_password_file_status
+
+- name: Check if ksc_web_password file exists
+  stat:
+    path: "{{ ksc_web_password_file }}"
+  register: ksc_web_password_file_status
+
+- name: Set db_root_password
+  set_fact:
+    db_root_password: "{{ lookup('file', db_root_password_file) if db_root_password_file_status.stat.exists else lookup('password', '/dev/null', length=12, chars='ascii_letters,digits') }}_"
+
+- name: Set ksc_db_password
+  set_fact:
+    ksc_db_password: "{{ lookup('file', ksc_db_password_file) if ksc_db_password_file_status.stat.exists else lookup('password', '/dev/null', length=12, chars='ascii_letters,digits') }}_"
+
+- name: Set ksc_web_password
+  set_fact:
+    ksc_web_password: "{{ lookup('file', ksc_web_password_file) if ksc_web_password_file_status.stat.exists else lookup('password', '/dev/null', length=12, chars='ascii_letters,digits') }}_"
+
+- name: Write db_root_password to file if not exists
+  copy:
+    dest: "{{ db_root_password_file }}"
+    content: "{{ db_root_password }}"
+    mode: "0600"
+  # when: not db_root_password_file_status.stat.exists
+
+- name: Write ksc_db_password to file if not exists
+  copy:
+    dest: "{{ ksc_db_password_file }}"
+    content: "{{ ksc_db_password }}"
+    mode: "0600"
+  # when: not ksc_db_password_file_status.stat.exists
+
+- name: Write ksc_web_password to file if not exists
+  copy:
+    dest: "{{ ksc_web_password_file }}"
+    content: "{{ ksc_web_password }}"
+    mode: "0600"
+  # when: not ksc_web_password_file_status.stat.exists
+
+- name: Save passwords as local facts in the current folder
+  copy:
+    dest: "{{ facts_dir }}/db_passwords.fact"
+    content: |
+      {
+        "db_root_password": "{{ db_root_password }}",
+        "ksc_db_password": "{{ ksc_db_password }}",
+        "ksc_web_password": "{{ ksc_web_password }}"
+      }
+    mode: "0600"
