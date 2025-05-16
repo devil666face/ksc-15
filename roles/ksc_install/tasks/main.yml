@@ -66,7 +66,7 @@
 - name: Create user for web
   shell: "/opt/kaspersky/ksc64/sbin/kladduser -n ksc -p '{{ db_passwords.ksc_web_password }}'"
   register: create_user_result
-  retries: 12
+  retries: 24
   delay: 10
   until: create_user_result.rc == 0
   ignore_errors: true

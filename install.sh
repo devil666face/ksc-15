@@ -57,6 +57,17 @@ function ansible_playbook() {
 }
 
 function main() {
+
+  echo "Удаляем предыдущие пакеты"
+  apt-get autoremove --purge ksc-web-console --yes
+  apt-get autoremove --purge ksc64 --yes
+  apt-get autoremove --purge postgresql-14 --yes
+  rm -rf /opt/kaspersky
+  rm -rf /var/opt/kaspersky
+  rm -rf /etc/opt/kaspersky
+  rm -rf /var/lib/postgresql
+  rm -rf /etc/postgresql/
+
   install_ansible
   if [ $? -ne 0 ]; then
       echo "Ошибка установки ansible"
