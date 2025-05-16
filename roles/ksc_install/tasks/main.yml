@@ -61,7 +61,7 @@
 - name: Wait before ksc server up
   wait_for:
     port: 13000
-    delay: 40
+    delay: 120
 
 - name: Create user for web
   shell: "/opt/kaspersky/ksc64/sbin/kladduser -n ksc -p '{{ db_passwords.ksc_web_password }}'"
