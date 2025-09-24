@@ -6,7 +6,8 @@ Description=proxy 443 to 8080 port
 User=root
 Group=root
 Restart=on-failure
-ExecStart=socat tcp4-listen:443,fork,reuseaddr,keepalive tcp4:{{ listen_ip }}:8080,keepalive
+ExecStart=socat tcp4-listen:443,fork,reuseaddr,keepalive tcp4:127.0.0.1:8080,keepalive
+# ExecStart=socat tcp4-listen:443,fork,reuseaddr,keepalive tcp4:{{ listen_ip }}:8080,keepalive
 
 [Install]
 WantedBy=multi-user.target
